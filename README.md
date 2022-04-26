@@ -1,12 +1,14 @@
 # Changes in this fork
 Word segmentation is a basic task in Vietnamese NLP, however, the original version of YAKE doesn't take word segmentation into account. This fork was made to work with segmented inputs. A Vietnamese stop-word list is also added in this fork.
 
-Vietnamese text input to this fork should be segmented, for example:
+Texts that are in Vietnamese are strongly advised to be segmented before feeding into this fork, for example:
 ```
 raw = "Tuy nhiên, đến nay chưa có hướng dẫn thực hành và điều trị nào với loại văcxin này."
 
-segmented = Tuy_nhiên , đây đơn_thuần là sự_kiện giới_thiệu , văcxin này chưa hề được thử_nghiệm lâm_sàng hay cấp phép sử_dụng tại Việt_Nam .
+segmented = "Tuy_nhiên , đây đơn_thuần là sự_kiện giới_thiệu , văcxin này chưa hề được thử_nghiệm lâm_sàng hay cấp phép sử_dụng tại Việt_Nam ."
 ```
+
+**If you are not doing any segmentation to the text, use the original verion of YAKE.**
 
 ## Code change explanation
 The code modification behind this fork is quite simple:
@@ -19,21 +21,21 @@ File: yake/datarepresentation.py
 +    self.sentences_str = [s.split() for s in self.sentences_str if len(s.strip()) > 0]
 ```
 
-YAKE by default use a word tokenizer called [`segtok`](https://github.com/fnl/segtok). Segmented words also get tokenized by `segtok`:
+YAKE by default uses a word tokenizer called [`segtok`](https://github.com/fnl/segtok). Segmented words also get tokenized by `segtok`:
 ```
 segmented = "thử_nghiệm lâm_sàng"
 
 tokenized = ["thử", "_", "nghiệm", "lâm", "_", "sàng"]
 ```
-This fork replaces `segtok` with a custom tokenizer, which properly tokenize Vietnamese segmented texts:
+This fork replaces `segtok` with a custom tokenizer, which properly tokenizes Vietnamese segmented texts:
 
 ```
-segmented = Tuy_nhiên , đây đơn_thuần là sự_kiện giới_thiệu , văcxin này chưa hề được thử_nghiệm lâm_sàng hay cấp phép sử_dụng tại Việt_Nam .
+segmented = 'Tuy_nhiên , đây đơn_thuần là sự_kiện giới_thiệu , văcxin này chưa hề được thử_nghiệm lâm_sàng hay cấp phép sử_dụng tại Việt_Nam .'
 
 tokenized = ['Tuy_nhiên', ',', 'đây', 'đơn_thuần', 'là', 'sự_kiện', 'giới_thiệu', ',', 'văcxin', 'này', 'chưa', 'hề', 'được', 'thử_nghiệm', 'lâm_sàng', 'hay', 'cấp', 'phép', 'sử_dụng', 'tại', 'Việt_Nam']
 ```
 
-This means that it loses some of the features from `segtok` (e.g. unescape escape sequences, advanced text processing etc.). You are advised to do your preferred preprocess on the text before using this fork.
+This means that this fork loses some of the features from `segtok` (e.g. unescape escape sequences, advanced text processing etc.). You are advised to do your preferred preprocess on the text before using this fork.
 # Yet Another Keyword Extractor (Yake)
 
 Unsupervised Approach for Automatic Keyword Extraction using Text Features.
